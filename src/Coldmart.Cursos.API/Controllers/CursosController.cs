@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Coldmart.Cursos.API.Controllers;
 
-[ApiController, Authorize(Roles = RolesConstants.Admin)]
+[ApiController, Authorize]
 [Route("api/[controller]")]
 public class CursosController : CustomControllerBase
 {
@@ -25,12 +25,14 @@ public class CursosController : CustomControllerBase
     }
 
     [HttpGet]
+    [Authorize(Roles = RolesConstants.Admin + "," + RolesConstants.Aluno)]
     public async Task<IActionResult> ObterTodosCursoAsync()
     {
         return CustomResponse(await _cursoQueries.ObterTodos());
     }
 
     [HttpGet("{id:Guid}")]
+    [Authorize(Roles = RolesConstants.Admin + "," + RolesConstants.Aluno)]
     public async Task<IActionResult> ObterPorIdCursoAsync(Guid id)
     {
         var result = await _cursoQueries.ObterPorId(id);
@@ -38,6 +40,7 @@ public class CursosController : CustomControllerBase
     }
 
     [HttpPost("")]
+    [Authorize(Roles = RolesConstants.Admin)]
     public async Task<IActionResult> CriarCursoAsync([FromBody] CursoViewModel viewModel)
     {
         await _mediator.Send(new CriarCursoRequest
@@ -49,6 +52,7 @@ public class CursosController : CustomControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = RolesConstants.Admin)]
     public async Task<IActionResult> EditarCursoAsync([FromRoute] Guid id, [FromBody] CursoViewModel viewModel)
     {
         viewModel.Id = id;
@@ -60,6 +64,7 @@ public class CursosController : CustomControllerBase
     }
 
     [HttpPost("{id:guid}/aulas")]
+    [Authorize(Roles = RolesConstants.Admin)]
     public async Task<IActionResult> AdicionarAulaAsync([FromRoute] Guid id, [FromBody] AulaViewModel viewModel)
     {
         await _mediator.Send(new AdicionarAulaRequest

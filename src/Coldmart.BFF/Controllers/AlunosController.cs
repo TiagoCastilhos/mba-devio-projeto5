@@ -48,10 +48,10 @@ public class AlunosController : CustomControllerBase
         return CustomResponse(response);
     }
 
-    [HttpGet("certificado")]
-    public async Task<IActionResult> Certificado()
+    [HttpGet("certificado/{id:guid}")]
+    public async Task<IActionResult> Certificado([FromRoute] Guid id)
     {
-        var response = await _alunoService.Certificado();
+        var response = await _alunoService.Certificado(id);
         return CustomResponse(response);
     }
 }

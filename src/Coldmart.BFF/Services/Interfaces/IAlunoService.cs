@@ -9,5 +9,5 @@ public interface IAlunoService
     Task<ResponseResult?> RealizarAula(RealizarAulaViewModel viewModel);
     Task<ResponseResult?> Historico();
     Task<ResponseResult?> Finalizar(FinalizarViewModel viewModel);
-    Task<ResponseResult?> Certificado();
+    Task<ResponseResult?> Certificado(Guid id);
 }

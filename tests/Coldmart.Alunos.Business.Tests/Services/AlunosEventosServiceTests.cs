@@ -17,7 +17,6 @@ public class AlunosEventosServiceTests
     public async Task Handle_AulaRealizadaEvento_DeveGerarCertificado(
         [Frozen] Mock<IAlunosDbContext> dbContext,
         AlunosEventosService service,
-        AulaRealizadaEvento evento,
         Aluno aluno, Matricula matricula,
         Curso curso,
         List<Aula> aulasCurso,
@@ -25,8 +24,7 @@ public class AlunosEventosServiceTests
         CancellationToken cancellationToken)
     {
         //arrange
-        evento.AlunoId = aluno.Id;
-        evento.CursoId = curso.Id;
+        var evento = new AulaRealizadaEvento { AlunoId = aluno.Id, CursoId = curso.Id };
 
         aulasCurso =
         [
@@ -74,7 +72,6 @@ public class AlunosEventosServiceTests
     public async Task Handle_AulaRealizadaEvento_QuandoFaltamAulasASeremRealizadas_NaoDeveGerarCertificado(
        [Frozen] Mock<IAlunosDbContext> dbContext,
        AlunosEventosService service,
-       AulaRealizadaEvento evento,
        Aluno aluno,
        Curso curso,
        List<Aula> aulasCurso,
@@ -82,8 +79,7 @@ public class AlunosEventosServiceTests
        CancellationToken cancellationToken)
     {
         //arrange
-        evento.AlunoId = aluno.Id;
-        evento.CursoId = curso.Id;
+        var evento = new AulaRealizadaEvento { AlunoId = aluno.Id, CursoId = curso.Id };
 
         aulasCurso =
         [
@@ -123,12 +119,11 @@ public class AlunosEventosServiceTests
     public async Task Handle_PagamentoRealizadoEvento_DeveIniciarMatricula(
        [Frozen] Mock<IAlunosDbContext> dbContext,
        AlunosEventosService service,
-       PagamentoRealizadoEvento evento,
        Matricula matricula,
        CancellationToken cancellationToken)
     {
         //arrange
-        evento.MatriculaId = matricula.Id;
+        var evento = new PagamentoRealizadoEvento { MatriculaId = matricula.Id };
         dbContext.Setup(db => db.Matriculas)
             .Returns(DbSetHelper.CreateMockedDbSet([matricula]).Object);
 
@@ -144,12 +139,11 @@ public class AlunosEventosServiceTests
     public async Task Handle_PagamentoCanceladoEvento_DeveCancelarMatricula(
        [Frozen] Mock<IAlunosDbContext> dbContext,
        AlunosEventosService service,
-       PagamentoCanceladoEvento evento,
        Matricula matricula,
        CancellationToken cancellationToken)
     {
         //arrange
-        evento.MatriculaId = matricula.Id;
+        var evento = new PagamentoCanceladoEvento { MatriculaId = matricula.Id };
         dbContext.Setup(db => db.Matriculas)
             .Returns(DbSetHelper.CreateMockedDbSet([matricula]).Object);
 

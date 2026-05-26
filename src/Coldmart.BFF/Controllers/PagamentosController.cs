@@ -22,7 +22,7 @@ public class PagamentosController : CustomControllerBase
     }
 
     [HttpGet()]
-    [Authorize(Roles = RolesConstants.Aluno)]
+    [Authorize(Roles = RolesConstants.Admin)]
     public async Task<IActionResult> ObterTodosAsync()
     {
         var response = await _pagamentoService.ObterTodosAsync();
@@ -30,7 +30,7 @@ public class PagamentosController : CustomControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = RolesConstants.Aluno)]
+    [Authorize(Roles = RolesConstants.Admin)]
     public async Task<IActionResult> ObterPorIdAsync([FromRoute] Guid id)
     {
         var response = await _pagamentoService.ObterPorIdAsync(id);

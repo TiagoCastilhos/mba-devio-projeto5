@@ -14,6 +14,6 @@ public class PagamentoRealizadoConsumer : IConsumer<PagamentoRealizadoEvento>
 
     public async Task Consume(ConsumeContext<PagamentoRealizadoEvento> context)
     {
-        await _mediator.Publish(context);
+        await _mediator.Publish(context.Message);
     }
 }

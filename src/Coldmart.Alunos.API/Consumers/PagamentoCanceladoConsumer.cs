@@ -14,6 +14,6 @@ public class PagamentoCanceladoConsumer : IConsumer<PagamentoCanceladoEvento>
 
     public async Task Consume(ConsumeContext<PagamentoCanceladoEvento> context)
     {
-        await _mediatr.Publish(context);
+        await _mediatr.Publish(context.Message);
     }
 }

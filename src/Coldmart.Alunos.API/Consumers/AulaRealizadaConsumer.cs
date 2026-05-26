@@ -14,6 +14,6 @@ public class AulaRealizadaConsumer : IConsumer<AulaRealizadaEvento>
 
     public async Task Consume(ConsumeContext<AulaRealizadaEvento> context)
     {
-        await _mediator.Publish(context);
+        await _mediator.Publish(context.Message);
     }
 }

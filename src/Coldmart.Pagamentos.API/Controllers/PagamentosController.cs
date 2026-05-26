@@ -8,7 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Coldmart.API.Controllers;
+namespace Coldmart.Pagamentos.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

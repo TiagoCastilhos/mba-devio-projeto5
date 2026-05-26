@@ -44,7 +44,7 @@ public class AlunosService : IRequestHandler<MatricularAoCursoRequest>, IRequest
         await _dbContext.Matriculas.AddAsync(matricula, cancellationToken);
 
         await _dbContext.SaveChangesAsync(cancellationToken);
-        await _publishEndpoint.Publish(new MatriculaRealizadaEvento { AlunoId = aluno.Id, CursoId = curso.Id }, cancellationToken);
+        await _publishEndpoint.Publish(new MatriculaRealizadaEvento { MatriculaId = matricula.Id, AlunoId = aluno.Id, CursoId = curso.Id }, cancellationToken);
     }
 
     public async Task Handle(RealizarAulaRequest request, CancellationToken cancellationToken)

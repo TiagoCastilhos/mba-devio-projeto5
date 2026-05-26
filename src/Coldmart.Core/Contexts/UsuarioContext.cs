@@ -51,6 +51,6 @@ public class UsuarioContext : IUsuarioContext
 
     public bool EstaAutenticado()
     {
-        return _httpContextAccessor.HttpContext.User.Identity.IsAuthenticated;
+        return _httpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated ?? false;
     }
 }

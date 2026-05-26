@@ -38,7 +38,11 @@ public class AlunosEventosService :
         await _alunosDbContext.Certificados.AddAsync(certificado, cancellationToken);
 
         var matricula = await _alunosDbContext.Matriculas
-            .FirstAsync(m => m.AlunoId == aluno.Id && m.CursoId == curso.Id, cancellationToken);
+            .FirstOrDefaultAsync(m => m.AlunoId == aluno.Id && m.CursoId == curso.Id, cancellationToken);
+
+        if (matricula == null)
+            return;
+
         matricula.Concluir();
 
         await _alunosDbContext.SaveChangesAsync(cancellationToken);

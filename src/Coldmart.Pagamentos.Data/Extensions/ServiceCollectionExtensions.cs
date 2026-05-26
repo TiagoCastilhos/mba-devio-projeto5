@@ -2,6 +2,7 @@
 using Coldmart.Core.Data.Extensions;
 using Coldmart.Core.Data.Seeders;
 using Coldmart.Pagamentos.Data.Contexts;
+using Coldmart.Pagamentos.Data.Seeders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +20,7 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<IDbSeeder, DbSeeder>();
+        services.AddScoped<IDbContextSeeder, PagamentosDbContextSeeder>();
 
         return services;
     }

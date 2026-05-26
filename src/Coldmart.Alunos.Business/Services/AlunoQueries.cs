@@ -20,13 +20,13 @@ public class AlunoQueries : IAlunoQueries
     {
         var usuarioId = _usuarioContext.ObterIdUsuario();
         var aluno = await _dbContext.Alunos.FirstOrDefaultAsync(a => a.Id == usuarioId);
-        return aluno.Historicos;
+        return aluno?.Historicos ?? [];
     }
 
     public async Task<Certificado> Certificado(Guid id)
     {
         var usuarioId = _usuarioContext.ObterIdUsuario();
         var aluno = await _dbContext.Alunos.FirstOrDefaultAsync(a => a.Id == usuarioId);
-        return aluno.Certificados.FirstOrDefault(c => c.Id == id);
+        return aluno?.Certificados?.FirstOrDefault(c => c.Id == id);
     }
 }

@@ -61,7 +61,7 @@ public class PagamentosService :
         pagamento.Aprovar();
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        await _publishEndpoint.Publish(new PagamentoRealizadoEvento { MatriculaId = pagamento.MatriculaId });
+        await _publishEndpoint.Publish(new PagamentoRealizadoEvento { MatriculaId = pagamento.MatriculaId }, cancellationToken);
     }
 
     public async Task Handle(CancelarPagamentoRequest request, CancellationToken cancellationToken)

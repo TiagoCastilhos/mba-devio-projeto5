@@ -28,14 +28,14 @@ public class PagamentoService : Service, IPagamentoService
     public async Task<ResponseResult?> AprovarPagamentoAsync(Guid id)
     {
         var pagamentoContent = ObterConteudo(id);
-        var response = await _httpClient.PostAsync($"api/pagamentos/{id}/aprovar", pagamentoContent);
+        var response = await _httpClient.PutAsync($"api/pagamentos/{id}/aprovar", pagamentoContent);
         return await DeserializarObjetoResponse<ResponseResult>(response);
     }
 
     public async Task<ResponseResult?> CancelarPagamentoAsync(Guid id)
     {
         var pagamentoContent = ObterConteudo(id);
-        var response = await _httpClient.PostAsync($"api/pagamentos/{id}/cancelar", pagamentoContent);
+        var response = await _httpClient.PutAsync($"api/pagamentos/{id}/cancelar", pagamentoContent);
         return await DeserializarObjetoResponse<ResponseResult>(response);
     }
 
