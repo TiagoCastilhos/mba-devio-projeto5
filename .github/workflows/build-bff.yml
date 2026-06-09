@@ -55,10 +55,6 @@ jobs:
     strategy:
       matrix:
         apis: [
-          { project: "Auth.API" }, 
-          { project: "Alunos.API" }, 
-          { project: "Cursos.API" }, 
-          { project: "Pagamentos.API" }, 
           { project: "BFF" }
         ]
 
@@ -75,11 +71,11 @@ jobs:
 
       - name: Restore
         run: 
-          dotnet restore ./Coldmart.sln
+          dotnet restore ./src/Coldmart.BFF/Coldmart.BFF.csproj
 
       - name: Build
         run: 
-          dotnet build --no-restore ./Coldmart.sln
+          dotnet build --no-restore ./src/Coldmart.BFF/Coldmart.BFF.csproj --configuration Release
       
       - name: Test
         run: 
@@ -168,10 +164,6 @@ jobs:
     strategy:
       matrix:
         apis: [
-          { name: "auth", project: "Auth.API" }, 
-          { name: "alunos", project: "Alunos.API" }, 
-          { name: "cursos", project: "Cursos.API" }, 
-          { name: "pagamentos", project: "Pagamentos.API" }, 
           { name: "bff", project: "BFF" }
         ]
 
