@@ -5,10 +5,7 @@ on:
     branches:
       - main
       - github-actions
-  pull_request:
-    branches:
-      - main
-      - github-actions
+
   workflow_dispatch:
 
 concurrency:
