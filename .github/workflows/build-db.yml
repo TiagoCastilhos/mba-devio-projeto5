@@ -61,6 +61,10 @@ jobs:
           path: 
           merge-multiple: false
 
+      - name: Shell script to create .env file
+        run: |
+          cp ./sql/init-db.sql ./
+
       - name: Build Docker Image
         run: |
           docker build -f ./sql/Dockerfile -t ${{ vars.DOCKERHUB_ACCOUNTID }}/coldmart-db:${{ env.version }} .
