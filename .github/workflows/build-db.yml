@@ -61,9 +61,9 @@ jobs:
           path: 
           merge-multiple: false
 
-      - name: Build Docker Image ${{ matrix.apis.name }}
+      - name: Build Docker Image
         run: |
-          docker build -f ./sql/Dockerfile -t ${{ vars.DOCKERHUB_ACCOUNTID }}/${{ matrix.apis.name }}:${{ env.version }} .
+          docker build -f ./sql/Dockerfile -t ${{ vars.DOCKERHUB_ACCOUNTID }}/coldmart-db:${{ env.version }} .
 
       - name: Tag Docker Image
         run: |
