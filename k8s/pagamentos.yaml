@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: pagamentos
-          image: tiagocastilhos/coldmart-pagamentos:latest
+          image: tiagocastilhos/pagamentos:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -54,8 +54,10 @@ metadata:
   name: pagamentos
   namespace: coldmart
 spec:
+  type: NodePort
   selector:
     app: pagamentos
   ports:
     - port: 8080
       targetPort: 8080
+      nodePort: 30083

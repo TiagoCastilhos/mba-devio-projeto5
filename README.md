@@ -208,6 +208,13 @@ O pipeline de sincronização entre os contextos de Alunos e Pagamentos está im
 
 10. Minikube
 - Atencao, atraves do shell, pode ser necessario alterar as permissoes do arquivo .sh atraves do comando `chmod +x ./k8s/deploy.sh` caso opte por rodar o projeto por ele.
+- `deploy.sh` e `stop.sh` Foram escritos para facilitar a chamada dos comandos.
+- Para acessar o swagger de cada servico, basta acessar de acordo com a tabela abaixo:
+| alunos | http://<Ip do seu profile do minikube>:30079/swagger
+| auth | http://<Ip do seu profile do minikube>:30080/swagger
+| bff | http://<Ip do seu profile do minikube>:30081/swagger
+| cursos | http://<Ip do seu profile do minikube>:30082/swagger
+| pagamentos | http://<Ip do seu profile do minikube>:30083/swagger
 
 11. Avaliação
 

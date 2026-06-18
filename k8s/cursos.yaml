@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: cursos
-          image: tiagocastilhos/coldmart-cursos:latest
+          image: tiagocastilhos/cursos:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -52,8 +52,10 @@ metadata:
   name: cursos
   namespace: coldmart
 spec:
+  type: NodePort
   selector:
     app: cursos
   ports:
     - port: 8080
       targetPort: 8080
+      nodePort: 30082

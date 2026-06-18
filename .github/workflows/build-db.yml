@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - deploy-kubernetes
       
   workflow_dispatch:
 
@@ -61,7 +60,7 @@ jobs:
           path: 
           merge-multiple: false
 
-      - name: Shell script to create .env file
+      - name: Copy init-db.sql
         run: |
           cp ./sql/init-db.sql ./
 

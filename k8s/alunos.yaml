@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: alunos
-          image: tiagocastilhos/coldmart-alunos:latest
+          image: tiagocastilhos/alunos:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -56,6 +56,8 @@ metadata:
 spec:
   selector:
     app: alunos
+  type: NodePort
   ports:
     - port: 8080
       targetPort: 8080
+      nodePort: 30079

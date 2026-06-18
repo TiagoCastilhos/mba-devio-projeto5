@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: bff
-          image: tiagocastilhos/coldmart-bff:latest
+          image: tiagocastilhos/bff:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

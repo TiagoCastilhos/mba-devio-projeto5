@@ -29,6 +29,18 @@ spec:
     spec:
       securityContext:
         fsGroup: 10001
+      initContainers:
+        - name: init-sql-data
+          image: busybox
+          command:
+            - sh
+            - -c
+            - chown -R 10001:10001 /var/opt/mssql
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: sqlserver-data
+              mountPath: /var/opt/mssql
       containers:
         - name: db
           image: tiagocastilhos/coldmart-db:latest
@@ -42,7 +54,7 @@ spec:
                   name: coldmart-secrets
                   key: db-password
             - name: ACCEPT_EULA
-              value: Y
+              value: "Y"
           volumeMounts:
             - name: sqlserver-data
               mountPath: /var/opt/mssql
