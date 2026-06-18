@@ -5,10 +5,10 @@ metadata:
   namespace: coldmart
 spec:
   accessModes:
-	- ReadWriteOnce
+    - ReadWriteOnce
   resources:
-	requests:
-	  storage: 2Gi
+    requests:
+      storage: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -18,59 +18,59 @@ metadata:
 spec:
   replicas: 1
   selector:
-	matchLabels:
-	  app: db
+    matchLabels:
+      app: db
   strategy:
-	type: Recreate
+    type: Recreate
   template:
-	metadata:
-	  labels:
-		app: db
-	spec:
-	  securityContext:
-		fsGroup: 10001
-	  containers:
-		- name: db
-		  image: tiagocastilhos/coldmart-db:latest
-		  imagePullPolicy: Always
-		  ports:
-			- containerPort: 1433
-		  env:
-			- name: SA_PASSWORD
-			  valueFrom:
-				secretKeyRef:
-				  name: coldmart-secrets
-				  key: db-password
-			- name: ACCEPT_EULA
-			  value: "Y"
-		  volumeMounts:
-			- name: sqlserver-data
-			  mountPath: /var/opt/mssql
-		  resources:
-			requests:
-			  cpu: "500m"
-			  memory: "2Gi"
-			limits:
-			  cpu: "2"
-			  memory: "4Gi"
-		  readinessProbe:
-			tcpSocket:
-			  port: 1433
-			initialDelaySeconds: 30
-			periodSeconds: 10
-			timeoutSeconds: 5
-			failureThreshold: 6
-		  livenessProbe:
-			tcpSocket:
-			  port: 1433
-			initialDelaySeconds: 60
-			periodSeconds: 15
-			timeoutSeconds: 5
-			failureThreshold: 3
-	  volumes:
-		- name: sqlserver-data
-		  persistentVolumeClaim:
-			claimName: sqlserver-pvc
+    metadata:
+      labels:
+        app: db
+    spec:
+      securityContext:
+        fsGroup: 10001
+      containers:
+        - name: db
+          image: tiagocastilhos/coldmart-db:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1433
+          env:
+            - name: SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coldmart-secrets
+                  key: db-password
+            - name: ACCEPT_EULA
+              value: Y
+          volumeMounts:
+            - name: sqlserver-data
+              mountPath: /var/opt/mssql
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+            limits:
+              cpu: 2
+              memory: 4Gi
+          readinessProbe:
+            tcpSocket:
+              port: 1433
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: 1433
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: sqlserver-data
+          persistentVolumeClaim:
+            claimName: sqlserver-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -79,7 +79,7 @@ metadata:
   namespace: coldmart
 spec:
   selector:
-	app: db
+    app: db
   ports:
-	- port: 1433
-	  targetPort: 1433
+    - port: 1433
+      targetPort: 1433

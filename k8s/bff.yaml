@@ -6,45 +6,45 @@ metadata:
 spec:
   replicas: 1
   selector:
-	matchLabels:
-	  app: bff
+    matchLabels:
+      app: bff
   template:
-	metadata:
-	  labels:
-		app: bff
-	spec:
-	  containers:
-		- name: bff
-		  image: tiagocastilhos/coldmart-bff:latest
-		  imagePullPolicy: Always
-		  ports:
-			- containerPort: 8080
-		  env:
-			- name: ASPNETCORE_ENVIRONMENT
-			  value: "Docker"
-			- name: ASPNETCORE_URLS
-			  value: "http://+:8080"
-		  resources:
-			requests:
-			  cpu: "100m"
-			  memory: "128Mi"
-			limits:
-			  cpu: "500m"
-			  memory: "512Mi"
-		  readinessProbe:
-			tcpSocket:
-			  port: 8080
-			initialDelaySeconds: 20
-			periodSeconds: 10
-			timeoutSeconds: 5
-			failureThreshold: 6
-		  livenessProbe:
-			tcpSocket:
-			  port: 8080
-			initialDelaySeconds: 40
-			periodSeconds: 15
-			timeoutSeconds: 5
-			failureThreshold: 3
+    metadata:
+      labels:
+        app: bff
+    spec:
+      containers:
+        - name: bff
+          image: tiagocastilhos/coldmart-bff:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Docker
+            - name: ASPNETCORE_URLS
+              value: http://+:8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
 ---
 apiVersion: v1
 kind: Service
@@ -54,8 +54,8 @@ metadata:
 spec:
   type: NodePort
   selector:
-	app: bff
+    app: bff
   ports:
-	- port: 8080
-	  targetPort: 8080
-	  nodePort: 30081
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30081

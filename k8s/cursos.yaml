@@ -6,45 +6,45 @@ metadata:
 spec:
   replicas: 1
   selector:
-	matchLabels:
-	  app: cursos
+    matchLabels:
+      app: cursos
   template:
-	metadata:
-	  labels:
-		app: cursos
-	spec:
-	  containers:
-		- name: cursos
-		  image: tiagocastilhos/coldmart-cursos:latest
-		  imagePullPolicy: Always
-		  ports:
-			- containerPort: 8080
-		  env:
-			- name: ASPNETCORE_ENVIRONMENT
-			  value: "Production"
-		  resources:
-			requests:
-			  cpu: "100m"
-			  memory: "128Mi"
-			limits:
-			  cpu: "500m"
-			  memory: "512Mi"
-		  readinessProbe:
-			httpGet:
-			  path: /healthz
-			  port: 8080
-			initialDelaySeconds: 20
-			periodSeconds: 10
-			timeoutSeconds: 5
-			failureThreshold: 6
-		  livenessProbe:
-			httpGet:
-			  path: /healthz
-			  port: 8080
-			initialDelaySeconds: 60
-			periodSeconds: 15
-			timeoutSeconds: 5
-			failureThreshold: 3
+    metadata:
+      labels:
+        app: cursos
+    spec:
+      containers:
+        - name: cursos
+          image: tiagocastilhos/coldmart-cursos:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
 ---
 apiVersion: v1
 kind: Service
@@ -53,7 +53,7 @@ metadata:
   namespace: coldmart
 spec:
   selector:
-	app: cursos
+    app: cursos
   ports:
-	- port: 8080
-	  targetPort: 8080
+    - port: 8080
+      targetPort: 8080

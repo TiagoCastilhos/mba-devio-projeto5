@@ -6,58 +6,58 @@ metadata:
 spec:
   replicas: 1
   selector:
-	matchLabels:
-	  app: rabbitmq
+    matchLabels:
+      app: rabbitmq
   template:
-	metadata:
-	  labels:
-		app: rabbitmq
-	spec:
-	  containers:
-		- name: rabbitmq
-		  image: rabbitmq:4-management
-		  imagePullPolicy: IfNotPresent
-		  ports:
-			- containerPort: 5672
-			- containerPort: 15672
-		  env:
-			- name: RABBITMQ_DEFAULT_USER
-			  valueFrom:
-				secretKeyRef:
-				  name: coldmart-secrets
-				  key: rabbitmq-user
-			- name: RABBITMQ_DEFAULT_PASS
-			  valueFrom:
-				secretKeyRef:
-				  name: coldmart-secrets
-				  key: rabbitmq-password
-		  resources:
-			requests:
-			  cpu: "200m"
-			  memory: "256Mi"
-			limits:
-			  cpu: "1"
-			  memory: "512Mi"
-		  readinessProbe:
-			exec:
-			  command:
-				- rabbitmq-diagnostics
-				- -q
-				- ping
-			initialDelaySeconds: 20
-			periodSeconds: 10
-			timeoutSeconds: 5
-			failureThreshold: 6
-		  livenessProbe:
-			exec:
-			  command:
-				- rabbitmq-diagnostics
-				- -q
-				- ping
-			initialDelaySeconds: 40
-			periodSeconds: 15
-			timeoutSeconds: 5
-			failureThreshold: 3
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:4-management
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: coldmart-secrets
+                  key: rabbitmq-user
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: coldmart-secrets
+                  key: rabbitmq-password
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 1
+              memory: 512Mi
+          readinessProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - -q
+                - ping
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            exec:
+              command:
+                - rabbitmq-diagnostics
+                - -q
+                - ping
+            initialDelaySeconds: 40
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
 ---
 apiVersion: v1
 kind: Service
@@ -66,11 +66,11 @@ metadata:
   namespace: coldmart
 spec:
   selector:
-	app: rabbitmq
+    app: rabbitmq
   ports:
-	- name: amqp
-	  port: 5672
-	  targetPort: 5672
-	- name: management
-	  port: 15672
-	  targetPort: 15672
+    - name: amqp
+      port: 5672
+      targetPort: 5672
+    - name: management
+      port: 15672
+      targetPort: 15672

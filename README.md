@@ -206,7 +206,10 @@ O pipeline de sincronização entre os contextos de Alunos e Pagamentos está im
 - A criação de pagamento no `PagamentosService` valida o `MatriculaId` recebido contra o banco local de Pagamentos
 - A operação é **idempotente**: o consumer verifica existência antes de inserir, protegendo contra reentrega de mensagem
 
-10. Avaliação
+10. Minikube
+- Atencao, atraves do shell, pode ser necessario alterar as permissoes do arquivo .sh atraves do comando `chmod +x ./k8s/deploy.sh` caso opte por rodar o projeto por ele.
+
+11. Avaliação
 
 Este projeto é parte de um curso acadêmico e não aceita contribuições externas.
 
