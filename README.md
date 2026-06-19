@@ -207,9 +207,11 @@ O pipeline de sincronização entre os contextos de Alunos e Pagamentos está im
 - A operação é **idempotente**: o consumer verifica existência antes de inserir, protegendo contra reentrega de mensagem
 
 10. Minikube/k8s
-- Atencao, atraves do shell, pode ser necessario alterar as permissoes do arquivo .sh atraves do comando `chmod +x ./k8s/deploy.sh` caso opte por rodar o projeto por ele.
 - `deploy.sh` e `stop.sh` Foram escritos para facilitar a chamada dos comandos.
-- Para acessar o swagger/health check de cada servico, basta acessar de acordo com a tabela abaixo:
+- Testado usando o minikube em uma distro linux (CachyOS). Pode haver alguma diferenca nas instrucoes caso esteja rodando em algum ambiente diferente.
+- Atencao! pode ser necessario alterar as permissoes dos arquivos .sh atraves do comando `chmod +x ./k8s/deploy.sh` e `chmod +x ./k8s/stop.sh`, caso opte por rodar o projeto por eles.
+
+Para acessar o swagger/health check de cada servico, basta acessar de acordo com a tabela abaixo:
 | Servico | Endereco swagger | Endereco swagger |
 | alunos | http://<Ip do seu profile do minikube>:30079/swagger | http://<Ip do seu profile do minikube>:30079/healthz |
 | auth | http://<Ip do seu profile do minikube>:30080/swagger | http://<Ip do seu profile do minikube>:30080/healthz |
