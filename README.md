@@ -206,15 +206,16 @@ O pipeline de sincronização entre os contextos de Alunos e Pagamentos está im
 - A criação de pagamento no `PagamentosService` valida o `MatriculaId` recebido contra o banco local de Pagamentos
 - A operação é **idempotente**: o consumer verifica existência antes de inserir, protegendo contra reentrega de mensagem
 
-10. Minikube
+10. Minikube/k8s
 - Atencao, atraves do shell, pode ser necessario alterar as permissoes do arquivo .sh atraves do comando `chmod +x ./k8s/deploy.sh` caso opte por rodar o projeto por ele.
 - `deploy.sh` e `stop.sh` Foram escritos para facilitar a chamada dos comandos.
-- Para acessar o swagger de cada servico, basta acessar de acordo com a tabela abaixo:
-| alunos | http://<Ip do seu profile do minikube>:30079/swagger
-| auth | http://<Ip do seu profile do minikube>:30080/swagger
-| bff | http://<Ip do seu profile do minikube>:30081/swagger
-| cursos | http://<Ip do seu profile do minikube>:30082/swagger
-| pagamentos | http://<Ip do seu profile do minikube>:30083/swagger
+- Para acessar o swagger/health check de cada servico, basta acessar de acordo com a tabela abaixo:
+| Servico | Endereco swagger | Endereco swagger |
+| alunos | http://<Ip do seu profile do minikube>:30079/swagger | http://<Ip do seu profile do minikube>:30079/healthz |
+| auth | http://<Ip do seu profile do minikube>:30080/swagger | http://<Ip do seu profile do minikube>:30080/healthz |
+| bff | http://<Ip do seu profile do minikube>:30081/swagger | http://<Ip do seu profile do minikube>:30081/healthz |
+| cursos | http://<Ip do seu profile do minikube>:30082/swagger | http://<Ip do seu profile do minikube>:30082/healthz |
+| pagamentos | http://<Ip do seu profile do minikube>:30083/swagger | http://<Ip do seu profile do minikube>:30083/healthz |
 
 11. Avaliação
 
