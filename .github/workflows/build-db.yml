@@ -1,0 +1,82 @@
+name: Build Sql Db
+
+on:
+  push:
+    branches:
+      - main
+      
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  versionamento:
+    runs-on: ubuntu-latest
+    name: Versionamento
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{github.head_ref}}
+          fetch-depth: 0
+        
+      - uses: codacy/git-version@2.8.0
+        id: version
+        with:
+          release-branch: main
+          prefix: v
+
+      - name: Tag do repositorio
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "::notice:: ${{ steps.version.outputs.version }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git tag -a ${{ steps.version.outputs.version }} -m "Release ${{ steps.version.outputs.version }}"
+          git push --tags
+        if: github.ref == 'refs/heads/main'
+
+  
+  build-docker-image:
+    needs: [versionamento]
+    runs-on: ubuntu-latest
+
+    env:
+      version: ${{ needs.versionamento.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: 
+          merge-multiple: false
+
+      - name: Copy init-db.sql
+        run: |
+          cp ./sql/init-db.sql ./
+
+      - name: Build Docker Image
+        run: |
+          docker build -f ./sql/Dockerfile -t ${{ vars.DOCKERHUB_ACCOUNTID }}/coldmart-db:${{ env.version }} .
+
+      - name: Tag Docker Image
+        run: |
+          docker tag ${{ vars.DOCKERHUB_ACCOUNTID }}/coldmart-db:${{ env.version }} ${{ vars.DOCKERHUB_ACCOUNTID }}/coldmart-db:latest
+
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+      - name: Docker Push
+        run: docker push --all-tags ${{ vars.DOCKERHUB_ACCOUNTID }}/coldmart-db

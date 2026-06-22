@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sqlserver-pvc
+  namespace: coldmart
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  namespace: coldmart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      securityContext:
+        fsGroup: 10001
+      initContainers:
+        - name: init-sql-data
+          image: busybox
+          command:
+            - sh
+            - -c
+            - chown -R 10001:10001 /var/opt/mssql
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: sqlserver-data
+              mountPath: /var/opt/mssql
+      containers:
+        - name: db
+          image: tiagocastilhos/coldmart-db:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1433
+          env:
+            - name: SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coldmart-secrets
+                  key: db-password
+            - name: ACCEPT_EULA
+              value: "Y"
+          volumeMounts:
+            - name: sqlserver-data
+              mountPath: /var/opt/mssql
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+            limits:
+              cpu: 2
+              memory: 4Gi
+          readinessProbe:
+            tcpSocket:
+              port: 1433
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: 1433
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: sqlserver-data
+          persistentVolumeClaim:
+            claimName: sqlserver-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coldmart-db
+  namespace: coldmart
+spec:
+  selector:
+    app: db
+  ports:
+    - port: 1433
+      targetPort: 1433
