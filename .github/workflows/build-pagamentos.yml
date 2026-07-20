@@ -3,7 +3,10 @@ name: Build Pagamentos API
 permissions:
   contents: write
   pull-requests: write
-  
+  actions: read
+  packages: read
+  security-events: write
+
 on:
   push:
     branches:
