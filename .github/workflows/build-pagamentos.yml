@@ -2,7 +2,8 @@ name: Build Pagamentos API
 
 permissions:
   contents: write
-
+  pull-requests: write
+  
 on:
   push:
     branches:
