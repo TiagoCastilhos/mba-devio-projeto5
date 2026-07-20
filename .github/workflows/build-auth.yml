@@ -23,3 +23,4 @@ jobs:
     with:
       project: "Auth.API"
       image: "auth"
+    secrets: inherit

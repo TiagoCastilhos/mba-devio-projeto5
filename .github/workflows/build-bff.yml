@@ -23,3 +23,4 @@ jobs:
     with:
       project: "BFF"
       image: "bff"
+    secrets: inherit

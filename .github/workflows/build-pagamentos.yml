@@ -23,3 +23,4 @@ jobs:
     with:
       project: "Pagamentos.API"
       image: "pagamentos"
+    secrets: inherit
