@@ -1,6 +1,6 @@
 # See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-# Estágio base: runtime enxuto com curl para health check
+# Estï¿½gio base: runtime enxuto com curl para health check
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
@@ -12,24 +12,19 @@ ENV ASPNETCORE_URLS=http://+:8080 \
     DOTNET_RUNNING_IN_CONTAINER=true \
     DOTNET_USE_POLLING_FILE_WATCHER=true
 
-# Estágio de restore: copia apenas os .csproj para aproveitar o cache de camadas
+# EstÃ¡gio de restore: copia o repositÃ³rio e restaura o projeto da raiz do contexto de build
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS restore
 WORKDIR /src
-COPY ["src/Coldmart.Core/Coldmart.Core.csproj", "Coldmart.Core/"]
-COPY ["src/Coldmart.Core.Data/Coldmart.Core.Data.csproj", "Coldmart.Core.Data/"]
-COPY ["src/Coldmart.Auth.Business/Coldmart.Auth.Business.csproj", "Coldmart.Auth.Business/"]
-COPY ["src/Coldmart.Auth.Data/Coldmart.Auth.Data.csproj", "Coldmart.Auth.Data/"]
-COPY ["src/Coldmart.Auth.API/Coldmart.Auth.API.csproj", "Coldmart.Auth.API/"]
-RUN dotnet restore "Coldmart.Auth.API/Coldmart.Auth.API.csproj"
+COPY . .
+RUN dotnet restore "./src/Coldmart.Auth.API/Coldmart.Auth.API.csproj"
 
-# Estágio de publish: compila e publica em uma única etapa
+# EstÃ¡gio de publish: compila e publica em uma Ãºnica etapa
 FROM restore AS publish
 ARG BUILD_CONFIGURATION=Release
-COPY . .
-WORKDIR "/src/Coldmart.Auth.API"
-RUN dotnet publish "./Coldmart.Auth.API.csproj" -c $BUILD_CONFIGURATION --no-restore -o /app/publish /p:UseAppHost=false
+WORKDIR "/src"
+RUN dotnet publish "./src/Coldmart.Auth.API/Coldmart.Auth.API.csproj" -c $BUILD_CONFIGURATION --no-restore -o /app/publish /p:UseAppHost=false
 
-# Estágio final: imagem de produção mínima
+# Estï¿½gio final: imagem de produï¿½ï¿½o mï¿½nima
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
