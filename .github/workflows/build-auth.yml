@@ -1,5 +1,8 @@
 name: Build Auth API
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:

@@ -1,5 +1,8 @@
 name: Build Alunos API
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:

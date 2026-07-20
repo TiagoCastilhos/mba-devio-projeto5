@@ -1,7 +1,4 @@
-name: Build Service (reusable)
-
-permissions:
-  contents: write
+name: Build Base
 
 on:
   workflow_call:

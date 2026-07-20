@@ -1,5 +1,8 @@
 name: Build Cursos API
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
