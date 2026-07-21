@@ -72,13 +72,6 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 6
-          livenessProbe:
-            tcpSocket:
-              port: 1433
-            initialDelaySeconds: 60
-            periodSeconds: 15
-            timeoutSeconds: 5
-            failureThreshold: 3
       volumes:
         - name: sqlserver-data
           persistentVolumeClaim:

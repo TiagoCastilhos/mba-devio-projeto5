@@ -108,7 +108,7 @@ Arquivos raiz:
 
 5. Funcionalidades Implementadas
 
-Casos de uso especificados no documento do projeto, que pode ser acessado [aqui](./docs/Projeto-Quarto-Modulo-Mba-DevXpert.pdf).
+Casos de uso especificados no documento do projeto, que pode ser acessado [aqui](./docs/Projeto-Quinto-Modulo-Mba-DevXpert.pdf).
 
 Autenticação e Autorização: Diferenciação entre alunos e administradores com JWT e perfis por endpoint.
 

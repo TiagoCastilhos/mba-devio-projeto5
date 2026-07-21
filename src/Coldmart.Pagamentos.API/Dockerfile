@@ -1,4 +1,4 @@
-# Estágio base: runtime enxuto com curl para health check
+# Estï¿½gio base: runtime enxuto com curl para health check
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
@@ -10,26 +10,19 @@ ENV ASPNETCORE_URLS=http://+:8080 \
     DOTNET_RUNNING_IN_CONTAINER=true \
     DOTNET_USE_POLLING_FILE_WATCHER=true
 
-# Estágio de restore: copia apenas os .csproj para aproveitar o cache de camadas
+# Estï¿½gio de restore: copia apenas os .csproj para aproveitar o cache de camadas
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS restore
 WORKDIR /src
-COPY ["src/Coldmart.Core/Coldmart.Core.csproj", "Coldmart.Core/"]
-COPY ["src/Coldmart.Core.Data/Coldmart.Core.Data.csproj", "Coldmart.Core.Data/"]
-COPY ["src/Coldmart.Auth.Data/Coldmart.Auth.Data.csproj", "Coldmart.Auth.Data/"]
-COPY ["src/Coldmart.Pagamentos.Domain/Coldmart.Pagamentos.Domain.csproj", "Coldmart.Pagamentos.Domain/"]
-COPY ["src/Coldmart.Pagamentos.Data/Coldmart.Pagamentos.Data.csproj", "Coldmart.Pagamentos.Data/"]
-COPY ["src/Coldmart.Pagamentos.Business/Coldmart.Pagamentos.Business.csproj", "Coldmart.Pagamentos.Business/"]
-COPY ["src/Coldmart.Pagamentos.API/Coldmart.Pagamentos.API.csproj", "Coldmart.Pagamentos.API/"]
-RUN dotnet restore "Coldmart.Pagamentos.API/Coldmart.Pagamentos.API.csproj"
+COPY . .
+RUN dotnet restore "./src/Coldmart.Pagamentos.API/Coldmart.Pagamentos.API.csproj"
 
-# Estágio de publish: compila e publica em uma única etapa
+# Estï¿½gio de publish: compila e publica em uma ï¿½nica etapa
 FROM restore AS publish
 ARG BUILD_CONFIGURATION=Release
-COPY . .
-WORKDIR "/src/Coldmart.Pagamentos.API"
-RUN dotnet publish "./Coldmart.Pagamentos.API.csproj" -c $BUILD_CONFIGURATION --no-restore -o /app/publish /p:UseAppHost=false
+WORKDIR "/src"
+RUN dotnet publish "./src/Coldmart.Pagamentos.API/Coldmart.Pagamentos.API.csproj" -c $BUILD_CONFIGURATION --no-restore -o /app/publish /p:UseAppHost=false
 
-# Estágio final: imagem de produção mínima
+# Estï¿½gio final: imagem de produï¿½ï¿½o mï¿½nima
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
