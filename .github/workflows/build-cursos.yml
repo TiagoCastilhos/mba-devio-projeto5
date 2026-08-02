@@ -11,10 +11,37 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/workflows/build-cursos.yml'
+      - '.github/workflows/build-base.yml'
+      - 'Coldmart.sln'
+      - 'src/Coldmart.Cursos.API/**'
+      - 'src/Coldmart.Cursos.Business/**'
+      - 'src/Coldmart.Cursos.Data/**'
+      - 'src/Coldmart.Cursos.Domain/**'
+      - 'src/Coldmart.Auth.Data/**'
+      - 'src/Coldmart.Core/**'
+      - 'src/Coldmart.Core.Data/**'
+      - 'tests/Coldmart.Cursos.Business.Tests/**'
+      - 'tests/Coldmart.Cursos.Domain.Tests/**'
+      - 'tests/Coldmart.Core.Tests/**'
   pull_request:
     branches:
       - main
-
+    paths:
+      - '.github/workflows/build-cursos.yml'
+      - '.github/workflows/build-base.yml'
+      - 'Coldmart.sln'
+      - 'src/Coldmart.Cursos.API/**'
+      - 'src/Coldmart.Cursos.Business/**'
+      - 'src/Coldmart.Cursos.Data/**'
+      - 'src/Coldmart.Cursos.Domain/**'
+      - 'src/Coldmart.Auth.Data/**'
+      - 'src/Coldmart.Core/**'
+      - 'src/Coldmart.Core.Data/**'
+      - 'tests/Coldmart.Cursos.Business.Tests/**'
+      - 'tests/Coldmart.Cursos.Domain.Tests/**'
+      - 'tests/Coldmart.Core.Tests/**'
   workflow_dispatch:
 
 jobs:

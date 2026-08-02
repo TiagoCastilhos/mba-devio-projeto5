@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Coldmart.Auth.API.Extensions;
 using Microsoft.OpenApi.Models;
 using Coldmart.Auth.API.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigurarInjecaoDependencia(builder.Configuration, builder.Environment);
@@ -46,7 +47,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHealthChecks()
-    .AddCheck<DatabaseHealthCheck>("Database");
+    .AddCheck<DatabaseHealthCheck>("Database", tags: ["ready"]);
 
 var app = builder.Build();
 
@@ -59,6 +60,14 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/healthz");
+app.MapHealthChecks("/healthz/live", new HealthCheckOptions
+{
+    Predicate = _ => false
+});
+app.MapHealthChecks("/healthz/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
 
 await app.AplicarMigracoesAsync();
 

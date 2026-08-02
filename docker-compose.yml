@@ -1,6 +1,9 @@
 services:
   auth:
+    env_file:
+      - .env
     build:
+      context: .
       dockerfile: ./src/Coldmart.Auth.API/Dockerfile
     ports:
       - "8082:8080"
@@ -10,10 +13,16 @@ services:
       db:
         condition: service_healthy
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - Jwt__SigningKey=${JWT_SIGNING_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
 
   cursos:
+    env_file:
+      - .env
     build:
+      context: .
       dockerfile: ./src/Coldmart.Cursos.API/Dockerfile
     ports:
       - "8085:8080"
@@ -25,13 +34,19 @@ services:
       db:
         condition: service_healthy
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - Jwt__SigningKey=${JWT_SIGNING_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
 
   alunos:
+    env_file:
+      - .env
     build:
+      context: .
       dockerfile: ./src/Coldmart.Alunos.API/Dockerfile
     ports:
-     - "8083:8080"
+      - "8083:8080"
     expose:
       - 8080
     depends_on:
@@ -42,11 +57,19 @@ services:
       db:
         condition: service_healthy
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
       - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=${RABBITMQ_USERNAME}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - Jwt__SigningKey=${JWT_SIGNING_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
 
   pagamentos:
+    env_file:
+      - .env
     build:
+      context: .
       dockerfile: ./src/Coldmart.Pagamentos.API/Dockerfile
     ports:
       - "8084:8080"
@@ -60,11 +83,19 @@ services:
       db:
         condition: service_healthy
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
       - RabbitMq__Host=rabbitmq
-      
+      - RabbitMq__Username=${RABBITMQ_USERNAME}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - Jwt__SigningKey=${JWT_SIGNING_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
+
   bff:
+    env_file:
+      - .env
     build:
+      context: .
       dockerfile: ./src/Coldmart.BFF/Dockerfile
     ports:
       - "8081:8080"
@@ -76,16 +107,21 @@ services:
       db:
         condition: service_healthy
     environment:
-      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
       - ASPNETCORE_URLS=http://+:8080
-  
+      - Jwt__SigningKey=${JWT_SIGNING_KEY}
+      - Jwt__Issuer=${JWT_ISSUER}
+      - Jwt__Audience=${JWT_AUDIENCE}
+
   db:
+    env_file:
+      - .env
     container_name: coldmart-db
     build:
-      dockerfile: Dockerfile
       context: ./sql
+      dockerfile: Dockerfile
     environment:
-      SA_PASSWORD: "Strong@Passw0rd"
+      SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
@@ -93,6 +129,8 @@ services:
       - 1433
 
   rabbitmq:
+    env_file:
+      - .env
     image: rabbitmq:4-management
     expose:
       - 5672
@@ -100,8 +138,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: "coldmart"
-      RABBITMQ_DEFAULT_PASS: "coldmart"  
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 10s

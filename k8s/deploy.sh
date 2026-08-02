@@ -1,14 +1,24 @@
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+if [ -z "$IMAGE_TAG" ]; then
+  echo "A variável IMAGE_TAG deve ser informada. Exemplo: IMAGE_TAG=v1.0.0 ./deploy.sh"
+  exit 1
+fi
+
+render_and_apply() {
+  envsubst '$IMAGE_TAG' < "$1" | kubectl apply -f -
+}
+
 kubectl apply -f "$SCRIPT_DIR/namespace.yaml"
+kubectl apply -f "$SCRIPT_DIR/configmap.yaml"
 kubectl apply -f "$SCRIPT_DIR/secrets.yaml"
-kubectl apply -f "$SCRIPT_DIR/db.yaml"
+render_and_apply "$SCRIPT_DIR/db.yaml"
 kubectl apply -f "$SCRIPT_DIR/rabbitmq.yaml"
-kubectl apply -f "$SCRIPT_DIR/auth.yaml"
-kubectl apply -f "$SCRIPT_DIR/cursos.yaml"
-kubectl apply -f "$SCRIPT_DIR/alunos.yaml"
-kubectl apply -f "$SCRIPT_DIR/pagamentos.yaml"
-kubectl apply -f "$SCRIPT_DIR/bff.yaml"
+render_and_apply "$SCRIPT_DIR/auth.yaml"
+render_and_apply "$SCRIPT_DIR/cursos.yaml"
+render_and_apply "$SCRIPT_DIR/alunos.yaml"
+render_and_apply "$SCRIPT_DIR/pagamentos.yaml"
+render_and_apply "$SCRIPT_DIR/bff.yaml"
 
 
 kubectl rollout status deployment/db -n coldmart --timeout=180s

@@ -11,10 +11,25 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/workflows/build-bff.yml'
+      - '.github/workflows/build-base.yml'
+      - 'Coldmart.sln'
+      - 'src/Coldmart.BFF/**'
+      - 'src/Coldmart.Core/**'
+      - 'tests/Coldmart.BFF.Tests/**'
+      - 'tests/Coldmart.Core.Tests/**'
   pull_request:
     branches:
       - main
-
+    paths:
+      - '.github/workflows/build-bff.yml'
+      - '.github/workflows/build-base.yml'
+      - 'Coldmart.sln'
+      - 'src/Coldmart.BFF/**'
+      - 'src/Coldmart.Core/**'
+      - 'tests/Coldmart.BFF.Tests/**'
+      - 'tests/Coldmart.Core.Tests/**'
   workflow_dispatch:
 
 jobs:

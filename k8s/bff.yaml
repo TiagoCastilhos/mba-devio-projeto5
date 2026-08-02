@@ -4,7 +4,7 @@ metadata:
   name: bff
   namespace: coldmart
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: bff
@@ -15,15 +15,27 @@ spec:
     spec:
       containers:
         - name: bff
-          image: tiagocastilhos/bff:latest
-          imagePullPolicy: Always
+          image: tiagocastilhos/bff:${IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: coldmart-config
           env:
-            - name: ASPNETCORE_ENVIRONMENT
-              value: Docker
             - name: ASPNETCORE_URLS
               value: http://+:8080
+            - name: Jwt__SigningKey
+              valueFrom:
+                secretKeyRef:
+                  name: coldmart-secrets
+                  key: jwt-signing-key
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            seccompProfile:
+              type: RuntimeDefault
           resources:
             requests:
               cpu: 100m
@@ -31,8 +43,17 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /healthz/ready
               port: 8080
             initialDelaySeconds: 20
             periodSeconds: 10
@@ -52,3 +73,23 @@ spec:
     - port: 8080
       targetPort: 8080
       nodePort: 30081
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: bff
+  namespace: coldmart
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: bff
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
