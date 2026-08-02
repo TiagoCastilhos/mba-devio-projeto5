@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Coldmart.BFF.Services.Interfaces;
+﻿using Coldmart.BFF.Services.Interfaces;
 using Coldmart.BFF.ViewModels;
 using Coldmart.Core.Constants;
 using Coldmart.Core.Controllers;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Coldmart.BFF.Controllers;
 
-[ExcludeFromCodeCoverage]
 [ApiController, Authorize]
 [Route("api/[controller]")]
 public class PagamentosController : CustomControllerBase
