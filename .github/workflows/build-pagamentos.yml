@@ -11,10 +11,37 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/workflows/build-pagamentos.yml'
+      - '.github/workflows/build-base.yml'
+      - 'Coldmart.sln'
+      - 'src/Coldmart.Pagamentos.API/**'
+      - 'src/Coldmart.Pagamentos.Business/**'
+      - 'src/Coldmart.Pagamentos.Data/**'
+      - 'src/Coldmart.Pagamentos.Domain/**'
+      - 'src/Coldmart.Auth.Data/**'
+      - 'src/Coldmart.Core/**'
+      - 'src/Coldmart.Core.Data/**'
+      - 'tests/Coldmart.Pagamentos.Business.Tests/**'
+      - 'tests/Coldmart.Pagamentos.Domain.Tests/**'
+      - 'tests/Coldmart.Core.Tests/**'
   pull_request:
     branches:
       - main
-
+    paths:
+      - '.github/workflows/build-pagamentos.yml'
+      - '.github/workflows/build-base.yml'
+      - 'Coldmart.sln'
+      - 'src/Coldmart.Pagamentos.API/**'
+      - 'src/Coldmart.Pagamentos.Business/**'
+      - 'src/Coldmart.Pagamentos.Data/**'
+      - 'src/Coldmart.Pagamentos.Domain/**'
+      - 'src/Coldmart.Auth.Data/**'
+      - 'src/Coldmart.Core/**'
+      - 'src/Coldmart.Core.Data/**'
+      - 'tests/Coldmart.Pagamentos.Business.Tests/**'
+      - 'tests/Coldmart.Pagamentos.Domain.Tests/**'
+      - 'tests/Coldmart.Core.Tests/**'
   workflow_dispatch:
 
 jobs:

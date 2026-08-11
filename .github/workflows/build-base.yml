@@ -9,6 +9,10 @@ on:
       image:
         required: true
         type: string
+      create_tag:
+        required: false
+        type: boolean
+        default: false
     secrets:
       DOCKERHUB_USERNAME:
         required: true
@@ -16,88 +20,52 @@ on:
         required: true
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.image }}
   cancel-in-progress: true
 
 jobs:
-  versionamento:
-    runs-on: ubuntu-latest
-    name: Versionamento
-
-    outputs:
-      version: ${{ steps.version.outputs.version }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{github.head_ref}}
-          fetch-depth: 0
-        
-      - uses: codacy/git-version@2.8.0
-        id: version
-        with:
-          release-branch: main
-          prefix: v
-
-      - name: Tag do repositorio
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "::notice:: ${{ steps.version.outputs.version }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }}"
-          git tag -a ${{ steps.version.outputs.version }} -m "Release ${{ steps.version.outputs.version }}"
-          git push --tags
-        if: github.ref == 'refs/heads/main'
-
   backend-build-and-test:
-    needs: versionamento
     runs-on: ubuntu-latest
     name: Backend Build and Test
-    strategy:
-      matrix:
-        apis: [ { project: "${{ inputs.project }}" } ]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
-          cache: true
-          cache-dependency-path: ./src/**/packages.lock.json
 
-      - name: Restore
-        run: 
-          dotnet restore ./src/Coldmart.${{ matrix.apis.project }}/Coldmart.${{ matrix.apis.project }}.csproj
+      - name: Restore solution
+        run: dotnet restore ./Coldmart.sln
 
-      - name: Build
-        run: 
-          dotnet build --no-restore ./src/Coldmart.${{ matrix.apis.project }}/Coldmart.${{ matrix.apis.project }}.csproj --configuration Release
-      
-      - name: Test
-        run: 
-          dotnet test ./Coldmart.sln --logger trx --results-directory "TestResults" --collect:"XPlat Code Coverage"
+      - name: Build solution
+        run: dotnet build ./Coldmart.sln --no-restore --configuration Release
 
-      - uses: actions/upload-artifact@v4
+      - name: Test solution with coverage
+        run: dotnet test ./Coldmart.sln --no-build --configuration Release --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults" --collect:"XPlat Code Coverage"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: dotnet-test-results
+          name: dotnet-test-results-${{ inputs.image }}
           path: TestResults
 
-      - name: Publish ${{ matrix.apis.project }}
-        run: dotnet publish ./src/Coldmart.${{ matrix.apis.project }}/Coldmart.${{ matrix.apis.project }}.csproj --no-restore --configuration Release --output ./Coldmart.${{ matrix.apis.project }}
-      
-      - name: Upload ${{ matrix.apis.name }} artifacts
+      - name: Upload coverage results
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: ${{ matrix.apis.project }}
-          path: ./Coldmart.${{ matrix.apis.project }}
+          name: coverage-results-${{ inputs.image }}
+          path: '**/coverage.cobertura.xml'
+
+      - name: Publish ${{ inputs.project }}
+        run: dotnet publish ./src/Coldmart.${{ inputs.project }}/Coldmart.${{ inputs.project }}.csproj --no-build --configuration Release --output ./publish/Coldmart.${{ inputs.project }}
 
   backend-lint:
-    needs: versionamento
     runs-on: ubuntu-latest
     name: Backend Lint
 
@@ -106,45 +74,44 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - uses: github/super-linter@v6
         env:
           DEFAULT_BRANCH: "main"
-          VALIDATE_ALL_CODEBASE: "false"
+          VALIDATE_ALL_CODEBASE: "true"
           VALIDATE_YAML: "true"
           VALIDATE_CSHARP: "true"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   dependency-checks:
-    needs: versionamento
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       contents: read
       pull-requests: write
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/dependency-review-action@v4
         with:
           comment-summary-in-pr: always
-          base-ref: main
-          head-ref: main
 
   code-security-check:
-    needs: versionamento
     runs-on: ubuntu-latest
     permissions:
       security-events: write
       packages: read
       actions: read
       contents: read
-    
+
     strategy:
       matrix:
         include:
           - name: Backend
             language: csharp
             build-mode: autobuild
-    
+
     steps:
       - uses: actions/checkout@v4
 
@@ -158,38 +125,75 @@ jobs:
         name: Analyze CodeQL - ${{ matrix.name }}
         with:
           category: "/language:${{ matrix.language }}"
-  
-  build-docker-image:
-    needs: [versionamento, backend-build-and-test]
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        apis: [ { name: "${{ inputs.image }}", project: "${{ inputs.project }}" } ]
 
-    env:
-      version: ${{ needs.versionamento.outputs.version }}
+  build-docker-image:
+    needs: [backend-build-and-test, backend-lint]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v4
-        with:
-          path: 
-          merge-multiple: false
-
-      - name: Build Docker Image ${{ matrix.apis.name }}
-        run: |
-          docker build -f ./src/Coldmart.${{ matrix.apis.project }}/Dockerfile -t ${{ vars.DOCKERHUB_ACCOUNTID }}/${{ matrix.apis.name }}:${{ env.version }} .
-
-      - name: Tag Docker Image
-        run: |
-          docker tag ${{ vars.DOCKERHUB_ACCOUNTID }}/${{ matrix.apis.name }}:${{ env.version }} ${{ vars.DOCKERHUB_ACCOUNTID }}/${{ matrix.apis.name }}:latest
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Docker Login
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-    
-      - name: Docker Push
-        run: docker push --all-tags ${{ vars.DOCKERHUB_ACCOUNTID }}/${{ matrix.apis.name }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ vars.DOCKERHUB_ACCOUNTID }}/${{ inputs.image }}
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./src/Coldmart.${{ inputs.project }}/Dockerfile
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ inputs.image }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.image }}
+
+  create-release-tag:
+    if: inputs.create_tag && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [backend-build-and-test, build-docker-image]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: codacy/git-version@2.8.0
+        id: version
+        with:
+          release-branch: main
+          prefix: v
+
+      - name: Tag do repositorio
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "::notice:: ${{ steps.version.outputs.version }}"
+          if git rev-parse "${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag já existe, pulando criação."
+            exit 0
+          fi
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --global user.name "${{ github.actor }}"
+          git tag -a ${{ steps.version.outputs.version }} -m "Release ${{ steps.version.outputs.version }}"
+          git push origin ${{ steps.version.outputs.version }}

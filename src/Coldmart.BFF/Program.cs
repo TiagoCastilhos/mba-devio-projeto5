@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Coldmart.BFF.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -88,5 +89,10 @@ app.UseEndpoints(endpoints =>
 });
 
 app.MapHealthChecks("/healthz");
+app.MapHealthChecks("/healthz/live", new HealthCheckOptions
+{
+    Predicate = _ => false
+});
+app.MapHealthChecks("/healthz/ready");
 
 await app.RunAsync();

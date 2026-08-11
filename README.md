@@ -139,9 +139,31 @@ Clone o Repositório:
 git clone https://github.com/seu-usuario/nome-do-repositorio.git
 cd nome-do-repositorio
 
+Crie o arquivo `.env` a partir do template disponível no repositório:
+
+```bash
+cp .env.example .env
+```
+
+Se estiver no Windows PowerShell, você pode usar:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Revise os valores do arquivo `.env` antes de subir os containers, principalmente:
+
+- `SA_PASSWORD`
+- `JWT_SIGNING_KEY`
+- `JWT_ISSUER`
+- `JWT_AUDIENCE`
+- `RABBITMQ_USERNAME`
+- `RABBITMQ_PASSWORD`
+- `ASPNETCORE_ENVIRONMENT`
+
 Uma vez na pasta raíz do projeto, rode o comando: `docker compose up`
 
-Os serviços e as dependências serão buildados (ou baixados dos respectivos registries).
+Os serviços e as dependências serão buildados (ou baixados dos respectivos registries). O `docker-compose.yml` já consome automaticamente o arquivo `.env` por meio de `env_file` e substituição de variáveis de ambiente.
 
 6.1 Credenciais dos usuários padrões (criados via seed)
 
@@ -207,17 +229,53 @@ O pipeline de sincronização entre os contextos de Alunos e Pagamentos está im
 - A operação é **idempotente**: o consumer verifica existência antes de inserir, protegendo contra reentrega de mensagem
 
 10. Minikube/k8s
-- `deploy.sh` e `stop.sh` Foram escritos para facilitar a chamada dos comandos.
-- Testado usando o minikube em uma distro linux (CachyOS). Pode haver alguma diferenca nas instrucoes caso esteja rodando em algum ambiente diferente.
-- Atencao! pode ser necessario alterar as permissoes dos arquivos .sh atraves do comando `chmod +x ./k8s/deploy.sh` e `chmod +x ./k8s/stop.sh`, caso opte por rodar o projeto por eles.
+- Os arquivos `deploy.sh` e `stop.sh` foram escritos para facilitar a execução dos comandos Kubernetes.
+- Testado usando Minikube em uma distribuição Linux (CachyOS). Pode haver pequenas diferenças caso esteja rodando em outro ambiente.
+- Pode ser necessário ajustar as permissões dos scripts com `chmod +x ./k8s/deploy.sh` e `chmod +x ./k8s/stop.sh`.
 
-Para acessar o swagger/health check de cada servico, basta acessar de acordo com a tabela abaixo:
-| Servico | Endereco swagger | Endereco swagger |
-| alunos | http://<Ip do seu profile do minikube>:30079/swagger | http://<Ip do seu profile do minikube>:30079/healthz |
-| auth | http://<Ip do seu profile do minikube>:30080/swagger | http://<Ip do seu profile do minikube>:30080/healthz |
-| bff | http://<Ip do seu profile do minikube>:30081/swagger | http://<Ip do seu profile do minikube>:30081/healthz |
-| cursos | http://<Ip do seu profile do minikube>:30082/swagger | http://<Ip do seu profile do minikube>:30082/healthz |
-| pagamentos | http://<Ip do seu profile do minikube>:30083/swagger | http://<Ip do seu profile do minikube>:30083/healthz |
+### Arquivos Kubernetes
+
+A pasta `k8s/` contém os seguintes manifestos principais:
+
+- `namespace.yaml`
+- `configmap.yaml`
+- `secrets.yaml`
+- `db.yaml`
+- `rabbitmq.yaml`
+- `auth.yaml`
+- `cursos.yaml`
+- `alunos.yaml`
+- `pagamentos.yaml`
+- `bff.yaml`
+
+### Configuração
+
+- Configurações não sensíveis ficam em `k8s/configmap.yaml`
+- Configurações sensíveis ficam em `k8s/secrets.yaml`
+- As imagens dos Deployments usam a variável `IMAGE_TAG`, permitindo deploy determinístico sem depender de `latest`
+
+### Deploy
+
+Para realizar o deploy, execute a partir da pasta `k8s` informando a tag desejada:
+
+```bash
+cd k8s
+IMAGE_TAG=v1.0.0 ./deploy.sh
+```
+
+O script aplica `namespace`, `configmap`, `secrets`, infraestrutura e Deployments, renderizando `${IMAGE_TAG}` via `envsubst` antes do `kubectl apply`.
+
+### Acesso aos serviços
+
+Para acessar o Swagger e o health check de cada serviço, use a tabela abaixo:
+
+| Serviço | Endereço Swagger | Endereço Health Check |
+|---|---|---|
+| `alunos` | `http://<IP do Minikube>:30079/swagger` | `http://<IP do Minikube>:30079/healthz` |
+| `auth` | `http://<IP do Minikube>:30080/swagger` | `http://<IP do Minikube>:30080/healthz` |
+| `bff` | `http://<IP do Minikube>:30081/swagger` | `http://<IP do Minikube>:30081/healthz` |
+| `cursos` | `http://<IP do Minikube>:30082/swagger` | `http://<IP do Minikube>:30082/healthz` |
+| `pagamentos` | `http://<IP do Minikube>:30083/swagger` | `http://<IP do Minikube>:30083/healthz` |
 
 11. Avaliação
 

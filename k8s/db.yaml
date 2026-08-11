@@ -43,8 +43,8 @@ spec:
               mountPath: /var/opt/mssql
       containers:
         - name: db
-          image: tiagocastilhos/coldmart-db:latest
-          imagePullPolicy: Always
+          image: tiagocastilhos/coldmart-db:${IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 1433
           env:
@@ -55,6 +55,12 @@ spec:
                   key: db-password
             - name: ACCEPT_EULA
               value: "Y"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - name: sqlserver-data
               mountPath: /var/opt/mssql

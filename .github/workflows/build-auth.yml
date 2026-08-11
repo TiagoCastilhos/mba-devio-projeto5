@@ -11,10 +11,31 @@ on:
   push:
     branches:
       - main
+    paths:
+      - '.github/workflows/build-auth.yml'
+      - '.github/workflows/build-base.yml'
+      - 'Coldmart.sln'
+      - 'src/Coldmart.Auth.API/**'
+      - 'src/Coldmart.Auth.Business/**'
+      - 'src/Coldmart.Auth.Data/**'
+      - 'src/Coldmart.Core/**'
+      - 'src/Coldmart.Core.Data/**'
+      - 'tests/Coldmart.Auth.Business.Tests/**'
+      - 'tests/Coldmart.Core.Tests/**'
   pull_request:
     branches:
       - main
-
+    paths:
+      - '.github/workflows/build-auth.yml'
+      - '.github/workflows/build-base.yml'
+      - 'Coldmart.sln'
+      - 'src/Coldmart.Auth.API/**'
+      - 'src/Coldmart.Auth.Business/**'
+      - 'src/Coldmart.Auth.Data/**'
+      - 'src/Coldmart.Core/**'
+      - 'src/Coldmart.Core.Data/**'
+      - 'tests/Coldmart.Auth.Business.Tests/**'
+      - 'tests/Coldmart.Core.Tests/**'
   workflow_dispatch:
 
 jobs:
@@ -23,4 +44,5 @@ jobs:
     with:
       project: "Auth.API"
       image: "auth"
+      create_tag: true
     secrets: inherit

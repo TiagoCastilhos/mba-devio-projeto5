@@ -31,6 +31,12 @@ spec:
                 secretKeyRef:
                   name: coldmart-secrets
                   key: rabbitmq-password
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            seccompProfile:
+              type: RuntimeDefault
           resources:
             requests:
               cpu: 200m

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coldmart-config
+  namespace: coldmart
+data:
+  ASPNETCORE_ENVIRONMENT: "Production"
+  Jwt__Issuer: "Coldmart"
+  Jwt__Audience: "http://localhost"
+  RabbitMq__Host: "rabbitmq"
+  AppSettings__AuthServiceUrl: "http://auth:8080"
+  AppSettings__AlunosServiceUrl: "http://alunos:8080"
+  AppSettings__PagamentosServiceUrl: "http://pagamentos:8080"
+  AppSettings__CursosServiceUrl: "http://cursos:8080"

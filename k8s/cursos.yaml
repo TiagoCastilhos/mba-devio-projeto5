@@ -4,7 +4,7 @@ metadata:
   name: cursos
   namespace: coldmart
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: cursos
@@ -15,13 +15,30 @@ spec:
     spec:
       containers:
         - name: cursos
-          image: tiagocastilhos/cursos:latest
-          imagePullPolicy: Always
+          image: tiagocastilhos/cursos:${IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: coldmart-config
           env:
-            - name: ASPNETCORE_ENVIRONMENT
-              value: Production
+            - name: Jwt__SigningKey
+              valueFrom:
+                secretKeyRef:
+                  name: coldmart-secrets
+                  key: jwt-signing-key
+            - name: ConnectionStrings__ColdmartDb
+              valueFrom:
+                secretKeyRef:
+                  name: coldmart-secrets
+                  key: cursos-connection-string
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            seccompProfile:
+              type: RuntimeDefault
           resources:
             requests:
               cpu: 100m
@@ -29,9 +46,17 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /healthz
+              path: /healthz/ready
               port: 8080
             initialDelaySeconds: 20
             periodSeconds: 10
@@ -44,10 +69,28 @@ metadata:
   name: cursos
   namespace: coldmart
 spec:
-  type: NodePort
   selector:
     app: cursos
   ports:
     - port: 8080
       targetPort: 8080
-      nodePort: 30082
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: cursos
+  namespace: coldmart
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: cursos
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
