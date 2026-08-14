@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/mssql/server:2022-latest
 USER root
 
 # Copy SQL scripts to the container
-COPY init-db.sql /scripts/init-db.sql
+COPY ./init-db.sql /scripts/init-db.sql
 
 # Grant execute permissions for the scripts
 RUN chmod +x /scripts/*
