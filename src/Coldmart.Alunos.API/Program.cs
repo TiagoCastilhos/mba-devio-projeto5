@@ -2,6 +2,7 @@ using Coldmart.Alunos.API.Extensions;
 using Coldmart.Alunos.API.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -48,6 +49,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHealthChecks()
     .AddCheck<DatabaseHealthCheck>("Database", tags: ["ready"]);
+
+builder.Services.AddSerilog();
 
 var app = builder.Build();
 

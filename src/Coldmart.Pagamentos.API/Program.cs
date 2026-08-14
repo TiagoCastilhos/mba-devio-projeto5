@@ -49,6 +49,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddHealthChecks()
     .AddCheck<DatabaseHealthCheck>("Database", tags: ["ready"]);
 
+builder.Services.AddSerilog();
+
 var app = builder.Build();
 
 app.UseSwagger();

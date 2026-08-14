@@ -16,8 +16,7 @@ namespace Coldmart.Pagamentos.Business.Tests.Services
         [Frozen] Mock<IPagamentosDbContext> dbContext,
         [Frozen] Mock<INotificador> notificador,
         PagamentoQueries service,
-        List<Pagamento> pagamentos,
-        CancellationToken cancellationToken)
+        List<Pagamento> pagamentos)
         {
             //arrange
             var cursosDbSet = DbSetHelper.CreateMockedDbSet(pagamentos);
@@ -36,8 +35,7 @@ namespace Coldmart.Pagamentos.Business.Tests.Services
             [Frozen] Mock<IPagamentosDbContext> dbContext,
             [Frozen] Mock<INotificador> notificador,
             PagamentoQueries service,
-            List<Pagamento> pagamentos,
-            CancellationToken cancellationToken)
+            List<Pagamento> pagamentos)
         {
             //arrange
             var cursosDbSet = DbSetHelper.CreateMockedDbSet(pagamentos);

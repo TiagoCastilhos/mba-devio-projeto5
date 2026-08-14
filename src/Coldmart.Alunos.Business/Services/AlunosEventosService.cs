@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Coldmart.Alunos.Business.Services;
 
-public class AlunosEventosService : 
+public class AlunosEventosService :
     INotificationHandler<AulaRealizadaEvento>,
     INotificationHandler<PagamentoCanceladoEvento>,
     INotificationHandler<PagamentoRealizadoEvento>
