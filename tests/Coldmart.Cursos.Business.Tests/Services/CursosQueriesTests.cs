@@ -16,9 +16,8 @@ public class CursosQueriesTests
         [Frozen] Mock<ICursosDbContext> dbContext,
         [Frozen] Mock<INotificador> notificador,
         CursoQueries service,
-        List<Curso> cursos, 
-        List<ConteudoProgramatico> conteudosProgramaticos,
-        CancellationToken cancellationToken)
+        List<Curso> cursos,
+        List<ConteudoProgramatico> conteudosProgramaticos)
     {
         //arrange
         var cursosDbSet = DbSetHelper.CreateMockedDbSet(cursos);
@@ -40,8 +39,7 @@ public class CursosQueriesTests
         [Frozen] Mock<ICursosDbContext> dbContext,
         [Frozen] Mock<INotificador> notificador,
         CursoQueries service,
-        List<Curso> cursos, List<Aula> aulas,
-        CancellationToken cancellationToken)
+        List<Curso> cursos, List<Aula> aulas)
     {
         //arrange
         var cursosDbSet = DbSetHelper.CreateMockedDbSet(cursos);

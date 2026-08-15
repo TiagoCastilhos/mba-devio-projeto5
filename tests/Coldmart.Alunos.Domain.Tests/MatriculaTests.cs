@@ -10,7 +10,7 @@ public class MatriculaTests
     {
         //act
         var matricula = new Matricula(curso, aluno);
-        
+
         //assert
         Assert.Equal(curso, matricula.Curso);
         Assert.Equal(aluno, matricula.Aluno);

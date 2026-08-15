@@ -12,7 +12,7 @@ public class NotificadorTests
     {
         //act
         notificador.AdicionarErro(erro);
-        
+
         //assert
         var erros = notificador.ObterErros();
         Assert.Contains(erro, erros);

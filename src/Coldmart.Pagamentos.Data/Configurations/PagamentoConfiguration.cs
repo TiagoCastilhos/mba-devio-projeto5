@@ -19,7 +19,7 @@ internal sealed class PagamentoConfiguration : EntityTypeConfiguration<Pagamento
             .HasConversion(p => p.ToString(), s => Enum.Parse<StatusPagamento>(s))
             .HasMaxLength(20);
 
-        builder 
+        builder
             .Property(p => p.Valor)
             .IsRequired()
             .HasColumnType("decimal(18,2)");

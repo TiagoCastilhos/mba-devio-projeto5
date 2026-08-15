@@ -1,9 +1,10 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Coldmart.Pagamentos.API.Extensions;
 using Coldmart.Pagamentos.API.HealthChecks;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigurarInjecaoDependencia(builder.Configuration, builder.Environment);
@@ -48,6 +49,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHealthChecks()
     .AddCheck<DatabaseHealthCheck>("Database", tags: ["ready"]);
+
+builder.Services.AddSerilog();
 
 var app = builder.Build();
 

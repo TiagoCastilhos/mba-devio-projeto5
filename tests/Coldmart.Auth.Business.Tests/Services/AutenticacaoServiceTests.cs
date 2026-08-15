@@ -95,7 +95,7 @@ public class AutenticacaoServiceTests
         //arrange
         signInManager.Setup(sm => sm.CheckPasswordSignInAsync(It.IsAny<IdentityUser>(), viewModel.Senha, false))
             .ReturnsAsync(SignInResult.LockedOut);
-        
+
         var autenticacaoService = new AutenticacaoService(userManager.Object, signInManager.Object, fixture.Create<JwtOptions>(), notificador.Object);
 
         //act

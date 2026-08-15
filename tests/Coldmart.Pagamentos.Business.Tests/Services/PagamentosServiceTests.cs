@@ -20,7 +20,7 @@ public class PagamentosServiceTests
         [Frozen] Mock<IPagamentosDbContext> dbContext,
         [Frozen] Mock<INotificador> notificador,
         Matricula matricula, List<Pagamento> pagamentos,
-        PagamentosService pagamentosService, 
+        PagamentosService pagamentosService,
         CriarPagamentoRequest request,
         CancellationToken cancellationToken)
     {

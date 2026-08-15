@@ -6,7 +6,9 @@ permissions:
   actions: read
   packages: read
   security-events: write
-
+  statuses: write
+  checks: write
+  
 on:
   push:
     branches:

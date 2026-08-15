@@ -1,8 +1,9 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Coldmart.BFF.Extensions;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddHealthChecks();
 
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddSerilog();
 
 var app = builder.Build();
 
